@@ -10,8 +10,13 @@ import { getFormattedMonth, getFormattedYear } from './dateFormatting.js';
  * @returns {boolean} - True if a matching summary title is found, false otherwise.
  */
 const isSummaryTabExists = (tabTitles) => {
-  const summaryTitle = createSummaryTitle();
-  return tabTitles.some((title) => title === summaryTitle);
+  try {
+    const summaryTitle = createSummaryTitle();
+    return tabTitles.some((title) => title === summaryTitle);
+  } catch (error) {
+    console.error('Error in isSummaryTabExists:', error);
+    return false;
+  }
 };
 
 /**
@@ -21,21 +26,25 @@ const isSummaryTabExists = (tabTitles) => {
  * @returns {boolean} - True if there are tabs from the previous month, false otherwise.
  */
 const hasSheetsFromLastMonth = (tabTitles) => {
-  const currentMonth = getFormattedMonth();
-  const lastMonth = getFormattedMonth('lastMonth');
-  const currentYear = getFormattedYear();
-  const lastYear = getFormattedYear('lastYear');
-  let yearToCheck = currentYear;
-  // If it's January, check for last year's summary.
-  if (currentMonth === 'Jan') {
-    yearToCheck = lastYear;
-  }
-  const monthYearPattern = new RegExp(
-    `${lastMonth}\\s*(\\d*,)?\\s*${yearToCheck}`,
-    'i'
-  );
+  try {
+    const currentMonth = getFormattedMonth();
+    const lastMonth = getFormattedMonth('lastMonth');
+    const currentYear = getFormattedYear();
+    const lastYear = getFormattedYear('lastYear');
+    let yearToCheck = currentYear;
+    if (currentMonth === 'Jan') {
+      yearToCheck = lastYear;
+    }
+    const monthYearPattern = new RegExp(
+      `${lastMonth}\\s*(\\d*,)?\\s*${yearToCheck}`,
+      'i'
+    );
 
-  return tabTitles.some((title) => monthYearPattern.test(title));
+    return tabTitles.some((title) => monthYearPattern.test(title));
+  } catch (error) {
+    console.error('Error in hasSheetsFromLastMonth:', error);
+    return false;
+  }
 };
 
 /**
@@ -46,8 +55,12 @@ const hasSheetsFromLastMonth = (tabTitles) => {
  * @returns {boolean} - True if a new collection is needed, false otherwise.
  */
 const isSummaryNeeded = (tabTitles) => {
-  // Check for the absence of a summary sheet for the last month.
-  return hasSheetsFromLastMonth(tabTitles) && !isSummaryTabExists(tabTitles);
+  try {
+    return hasSheetsFromLastMonth(tabTitles) && !isSummaryTabExists(tabTitles);
+  } catch (error) {
+    console.error('Error in isSummaryNeeded:', error);
+    return false;
+  }
 };
 
 /**
@@ -62,7 +75,11 @@ export const isSummaryRequired = async ({ csv }) => {
   if (csv) {
     return false;
   }
-  const existingTabTitles = await getExistingTabTitlesInRange();
-
-  return await isSummaryNeeded(existingTabTitles);
+  try {
+    const existingTabTitles = await getExistingTabTitlesInRange();
+    return isSummaryNeeded(existingTabTitles);
+  } catch (error) {
+    console.error('Error in isSummaryRequired:', error);
+    return false;
+  }
 };

@@ -1,19 +1,25 @@
 module.exports = {
-  // Other Jest configuration options...
   transform: {
-    '^.+\\.m?js$': 'babel-jest', // This regex allows for both .mjs and .js file extensions
+    // '^.+\\.js$': 'babel-jest',
   },
   transformIgnorePatterns: [
     'node_modules/(?!(module-that-needs-transpiling)/)', // Add any modules that need to be transpiled by Babel
   ],
   // If you're using ESM, you might need the following options as well:
   testEnvironment: 'node',
-  moduleFileExtensions: ['js', 'mjs', 'cjs', 'ts', 'json', 'node'],
+  moduleFileExtensions: ['js', 'json', 'node'],
+  collectCoverage: true,
+  // coverageReporters: ['json', 'html'], //not required yet, later project update will use json output and send results to google sheet.
+  collectCoverageFrom: [
+    'src/**/*.mjs',
+    'src/**/*.js',
+    'scripts/**/*.mjs',
+    'scripts/**/*.js',
+  ],
   testMatch: [
     '**/__tests__/**/*.mjs',
     '**/?(*.)+(spec|test).mjs',
     '**/__tests__/**/*.js',
     '**/?(*.)+(spec|test).js',
   ],
-  // ... any other configuration options
 };

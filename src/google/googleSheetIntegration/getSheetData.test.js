@@ -27,12 +27,14 @@ describe('Google Sheets Integration', () => {
   describe('getTopLevelSpreadsheetData', () => {
     it('retrieves top-level spreadsheet data and updates dataObjects', async () => {
       const mockResponse = { data: 'topLevelData' };
+      // @ts-ignore
       mockSheets.spreadsheets.get.mockResolvedValue(mockResponse);
 
       const data = await getTopLevelSpreadsheetData(
         mockSheets,
         mockAuth,
         mockSpreadsheetId,
+        // @ts-ignore
         mockDataObjects
       );
       expect(mockSheets.spreadsheets.get).toHaveBeenCalledWith({
@@ -45,6 +47,7 @@ describe('Google Sheets Integration', () => {
 
     it('throws an error when fetching top-level data fails', async () => {
       const mockError = new Error('API Error');
+      // @ts-ignore
       mockSheets.spreadsheets.get.mockRejectedValue(mockError);
 
       await expect(
@@ -52,6 +55,7 @@ describe('Google Sheets Integration', () => {
           mockSheets,
           mockAuth,
           mockSpreadsheetId,
+          // @ts-ignore
           mockDataObjects
         )
       ).rejects.toThrow('Error fetching top-level spreadsheet data.');
@@ -62,6 +66,7 @@ describe('Google Sheets Integration', () => {
     it('retrieves values from a specific tab by title', async () => {
       const tabTitle = 'TestTab';
       const mockResponse = { data: 'tabValues' };
+      // @ts-ignore
       mockSheets.spreadsheets.values.get.mockResolvedValue(mockResponse);
 
       const data = await getTabValuesByTitle(
@@ -81,6 +86,7 @@ describe('Google Sheets Integration', () => {
     it('throws an error when fetching tab values fails', async () => {
       const tabTitle = 'TestTab';
       const mockError = new Error('API Error');
+      // @ts-ignore
       mockSheets.spreadsheets.values.get.mockRejectedValue(mockError);
 
       await expect(

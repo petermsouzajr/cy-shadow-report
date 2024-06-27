@@ -12,7 +12,10 @@ export const extractAreaFromFullFile = async (fullFile, testTypesAvailable) => {
     throw new Error('The "fullFile" argument must be a string.');
   }
 
-  if (!Array.isArray(testTypesAvailable)) {
+  if (
+    !Array.isArray(testTypesAvailable) ||
+    testTypesAvailable.some((type) => typeof type !== 'string')
+  ) {
     throw new Error(
       'The "testTypesAvailable" argument must be an array of strings.'
     );
@@ -209,7 +212,7 @@ export const extractTypeFromFullFile = (fullFile, testTypesAvailable) => {
   }
 
   const matchingTypes = testTypesAvailable.filter((targetType) =>
-    fullFile.includes(`${targetType}/`)
+    new RegExp(`\\b${targetType}\\b`).test(fullFile)
   );
 
   return matchingTypes.join(', ') || '';

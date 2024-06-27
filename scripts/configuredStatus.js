@@ -1,3 +1,3 @@
 export const isProjectConfigured = () => {
-  return false;
+  return true;
 };

@@ -5,3 +5,6 @@ shadowReportConfig.js
 package-lock.json
 cypressTestResults.json
 playwrightTestResults.json
+jestTestResults.json
+coverage
+docs

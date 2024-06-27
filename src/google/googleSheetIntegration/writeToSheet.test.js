@@ -1,8 +1,5 @@
 import { jest } from '@jest/globals';
-import {
-  writeToSheet,
-  batchUpdateMasterSheet,
-} from './writeToSheet';
+import { writeToSheet, batchUpdateMasterSheet } from './writeToSheet';
 
 // Dummy values for auth and spreadsheetId
 const dummyAuth = { dummyAuth: true };
@@ -51,6 +48,7 @@ describe('Google Sheets Integration', () => {
     });
 
     it('should handle errors when they occur', async () => {
+      // @ts-ignore
       mockAppend.mockRejectedValue(new Error('Test error'));
       await expect(
         writeToSheet(mockSheetTitle, mockValues, mockSheetsAPI)
@@ -70,6 +68,7 @@ describe('Google Sheets Integration', () => {
     });
 
     it('should handle errors when they occur', async () => {
+      // @ts-ignore
       mockBatchUpdate.mockRejectedValue(new Error('Test error'));
       await expect(
         batchUpdateMasterSheet(mockPayload, mockSheetsAPI)

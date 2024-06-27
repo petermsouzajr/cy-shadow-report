@@ -25,43 +25,56 @@ export const copyPasteNormal = (
     endRow: srcEndRow,
     startCol: srcStartCol,
     endCol: srcEndCol,
-  },
+  } = {},
   {
     destinationTabId,
     startRow: destStartRow,
     endRow: destEndRow,
     startCol: destStartCol,
     endCol: destEndCol,
-  }
+  } = {}
 ) => {
-  try {
-    if (!sourcePageId || !destinationTabId) {
-      throw new Error(
-        'Both sourcePageId and destinationTabId must be provided.'
-      );
-    }
-
-    return {
-      copyPaste: {
-        source: {
-          sheetId: sourcePageId,
-          startRowIndex: srcStartRow,
-          endRowIndex: srcEndRow,
-          startColumnIndex: srcStartCol,
-          endColumnIndex: srcEndCol,
-        },
-        destination: {
-          sheetId: destinationTabId,
-          startRowIndex: destStartRow,
-          endRowIndex: destEndRow,
-          startColumnIndex: destStartCol,
-          endColumnIndex: destEndCol,
-        },
-        pasteType: 'PASTE_NORMAL',
-      },
-    };
-  } catch (error) {
-    console.error('Failed to create copy-paste configuration:', error);
-    throw error;
+  if (
+    typeof sourcePageId !== 'number' ||
+    typeof srcStartRow !== 'number' ||
+    typeof srcEndRow !== 'number' ||
+    typeof srcStartCol !== 'number' ||
+    typeof srcEndCol !== 'number'
+  ) {
+    throw new Error(
+      'Invalid source parameters: sourcePageId, startRow, endRow, startCol, and endCol must all be numbers.'
+    );
   }
+
+  if (
+    typeof destinationTabId !== 'number' ||
+    typeof destStartRow !== 'number' ||
+    typeof destEndRow !== 'number' ||
+    typeof destStartCol !== 'number' ||
+    typeof destEndCol !== 'number'
+  ) {
+    throw new Error(
+      'Invalid destination parameters: destinationTabId, startRow, endRow, startCol, and endCol must all be numbers.'
+    );
+  }
+
+  return {
+    copyPaste: {
+      source: {
+        sheetId: sourcePageId,
+        startRowIndex: srcStartRow,
+        endRowIndex: srcEndRow,
+        startColumnIndex: srcStartCol,
+        endColumnIndex: srcEndCol,
+      },
+      destination: {
+        sheetId: destinationTabId,
+        startRowIndex: destStartRow,
+        endRowIndex: destEndRow,
+        startColumnIndex: destStartCol,
+        endColumnIndex: destEndCol,
+      },
+      pasteType: 'PASTE_NORMAL',
+    },
+  };
 };

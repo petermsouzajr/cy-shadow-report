@@ -1,10 +1,11 @@
 import { faker } from '@faker-js/faker';
 import { formatDuration } from '../sharedMethods/dateFormatting';
-import { constructHeaderReport } from './buildReport';
 import {
+  ALL_TEAM_NAMES,
   TEST_CATEGORIES_AVAILABLE,
   TEST_TYPES_AVAILABLE,
 } from '../../constants';
+import { constructHeaderReport } from './reportGeneration/constructHeaderReport';
 
 const getRandomTestData = () => {
   const getRandomElement = (array) => {
@@ -26,26 +27,28 @@ const getRandomTestData = () => {
   ]);
   const typesAvailable = TEST_TYPES_AVAILABLE();
   const categoriesAvailable = TEST_CATEGORIES_AVAILABLE();
+  const teamNamesAvailable = ALL_TEAM_NAMES();
   return {
     area: generateRandomFolderStructure(),
     spec: `${faker.lorem.word()}`,
-    testName: `${faker.lorem.words(1, 3)} - ${faker.lorem.sentence(
-      1,
-      6
-    )} - ${faker.lorem.words(1, 3)}`,
+    testName: `${faker.lorem.words({ min: 1, max: 3 })} - ${faker.lorem.sentence(
+      { min: 1, max: 6 }
+    )} - ${faker.lorem.words({ min: 1, max: 3 })}`,
     type: getRandomElement(typesAvailable),
     category: getRandomElement(categoriesAvailable),
-    teamName: faker.lorem.word(),
+    teamName: getRandomElement(teamNamesAvailable),
     manualTestId: `C${faker.number.int({ min: 10, max: 99999 })}`,
-    error: currentState === 'failed' ? faker.lorem.words(5, 20) : '',
+    error:
+      currentState === 'failed' ? faker.lorem.words({ min: 5, max: 20 }) : '',
     speedMillis: speedMillis,
     speed: formatDuration(speedMillis),
     state: currentState,
+    projectName: faker.lorem.word(),
   };
 };
 
-const testData1 = getRandomTestData({});
-const testData2 = getRandomTestData({});
+const testData1 = getRandomTestData();
+const testData2 = getRandomTestData();
 
 const fullReportOutput = {
   stats: {
@@ -88,7 +91,7 @@ const fullReportOutput = {
               fullTitle: testData1.testName,
               timedOut: null,
               duration: testData1.speedMillis,
-              state: 'failed',
+              state: testData1.state,
               speed: null,
               pass: false,
               fail: true,
@@ -105,6 +108,7 @@ const fullReportOutput = {
               parentUUID: '4f53g4g-53d2-4af7-933e-gh456fghf',
               isHook: false,
               skipped: false,
+              projectName: testData1.projectName,
             },
           ],
           suites: [],
@@ -171,13 +175,14 @@ const fullReportOutput = {
                   err: {
                     message: testData2.error,
                     estack:
-                      "CypressError: `cy.task('ctrLogFiles')` failed with the following error:\n\nThe task 'ctrLogFiles' was not handled in the setupNodeEvents method. The following tasks are registered: getLocalConfig, dispatchSignIn, fileExists, safeReadJson, deleteFile\n\nFix this in your setupNodeEvents method here:",
+                      "CypressError: `cy.task('ctrLogFiles')` failed with the  error:\n\nThe task 'ctrLogFiles' was not handled in the setupNodeEvents method. The following tasks are registered: getLocalConfig, dispatchSignIn, fileExists, safeReadJson, deleteFile\n\nFix this in your setupNodeEvents method here:",
                     diff: null,
                   },
                   uuid: 'dgh6545-4555-45a0-a3cc-1068c2155ed6',
                   parentUUID: 'hfg76-6521-4b60-9583-3562ffadd9a6',
                   isHook: false,
                   skipped: false,
+                  projectName: testData2.projectName,
                 },
               ],
               suites: [],
@@ -239,6 +244,28 @@ const fullReportOutput = {
   },
 };
 
+const updateErrorMessage = (obj) => {
+  if (Array.isArray(obj)) {
+    return obj.map((item) => updateErrorMessage(item));
+  } else if (obj !== null && typeof obj === 'object') {
+    const newObj = {};
+    for (const key in obj) {
+      if (obj.hasOwnProperty(key)) {
+        if (key === 'err') {
+          newObj[key] = obj[key].message;
+        } else {
+          newObj[key] = updateErrorMessage(obj[key]);
+        }
+      }
+    }
+    return newObj;
+  } else {
+    return obj;
+  }
+};
+
+const playwrightFullReportOutput = updateErrorMessage(fullReportOutput);
+
 const expectedPayloadEntries = [
   {
     area: testData1.area,
@@ -249,7 +276,7 @@ const expectedPayloadEntries = [
     team: '',
     priority: '',
     status: '',
-    state: 'failed',
+    state: testData1.state,
     manualTestId: '',
     error: testData1.error,
     speed: testData1.speed,
@@ -268,6 +295,37 @@ const expectedPayloadEntries = [
     error: testData2.error,
     speed: testData2.speed,
   },
+];
+
+const expectedPayloadEntryValues = [
+  [
+    testData1.area,
+    testData1.spec,
+    testData1.testName,
+    '',
+    '',
+    '',
+    '',
+    '',
+    testData1.state,
+    '',
+    testData1.error,
+    testData1.speed,
+  ],
+  [
+    testData2.area,
+    testData2.spec,
+    testData2.testName,
+    testData2.type,
+    testData2.category,
+    '',
+    '',
+    '',
+    testData2.state,
+    testData2.manualTestId,
+    testData2.error,
+    testData2.speed,
+  ],
 ];
 
 const expectedPayloadEntry = expectedPayloadEntries[0];
@@ -361,6 +419,47 @@ const appendedEmptyHeaderPayload = [
   ],
   ['', '', '', '', '', '', '', '# total tests', 'total tests formula total'],
 ];
+
+const expectedBodyPayload = [
+  [
+    `# ${testData2.type} tests passed`,
+    `${testData2.type} formula tests passed`,
+    `# ${testData2.category} tests passed`,
+    `${testData2.category} formula tests passed`,
+    '',
+    '',
+    '',
+    '# passed tests',
+    'passed formula base',
+  ],
+  ['', '', '', '', '', '', '', '# failed tests', 'failed formula base'],
+  [
+    '',
+    '',
+    '',
+    '',
+    '',
+    '',
+    '',
+    '# skipped/pending tests',
+    'skipped/pending tests formula skipped/pending',
+  ],
+  ['', '', '', '', '', '', '', '# total tests', 'total tests formula total'],
+  [
+    'browser',
+    'spec',
+    'test name',
+    'type',
+    'category',
+    'team',
+    'priority',
+    'status',
+    'state',
+    'manual case',
+    'error',
+    'speed',
+  ],
+];
 export const testResultData = {
   fullReportOutput,
   expectedPayloadEntries,
@@ -373,4 +472,7 @@ export const testResultData = {
   emptyDailyPayload,
   testData1,
   testData2,
+  expectedBodyPayload,
+  expectedPayloadEntryValues,
+  playwrightFullReportOutput,
 };

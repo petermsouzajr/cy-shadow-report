@@ -29,11 +29,13 @@ describe('createNewTab', () => {
 
   it('should create a new summary tab and update summaryTabData', async () => {
     const mockSheetName = 'Summary';
+    // @ts-ignore
     mockBatchUpdate.mockResolvedValue({ data: 'mockResponse' });
     mockCreateSummaryTitle.mockReturnValue('Summary');
 
     const response = await createNewTab(
       mockSheetName,
+      // @ts-ignore
       mockCreateSummaryTitle,
       mockDataObjects,
       mockSheetsAPI
@@ -52,10 +54,12 @@ describe('createNewTab', () => {
 
   it('should create a new regular tab and update todaysReportData', async () => {
     const mockSheetName = 'RegularTab';
+    // @ts-ignore
     mockBatchUpdate.mockResolvedValue({ data: 'mockRegularResponse' });
 
     const response = await createNewTab(
       mockSheetName,
+      // @ts-ignore
       mockCreateSummaryTitle,
       mockDataObjects,
       mockSheetsAPI
@@ -75,11 +79,13 @@ describe('createNewTab', () => {
   it('should throw an error when the API call fails', async () => {
     const mockSheetName = 'ErrorTab';
     const mockError = new Error('API Error');
+    // @ts-ignore
     mockBatchUpdate.mockRejectedValue(mockError);
 
     await expect(
       createNewTab(
         mockSheetName,
+        // @ts-ignore
         mockCreateSummaryTitle,
         mockDataObjects,
         mockSheetsAPI
@@ -97,11 +103,13 @@ describe('createNewTab', () => {
 
   it('should call createSummaryTitle with specific parameters', async () => {
     const mockSheetName = 'Summary';
+    // @ts-ignore
     mockBatchUpdate.mockResolvedValue({ data: 'mockResponse' });
     mockCreateSummaryTitle.mockReturnValue(mockSheetName);
 
     await createNewTab(
       mockSheetName,
+      // @ts-ignore
       mockCreateSummaryTitle,
       mockDataObjects,
       mockSheetsAPI

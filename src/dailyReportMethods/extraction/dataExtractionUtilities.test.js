@@ -7,8 +7,6 @@ import {
   extractManualTestCaseIdFromTest,
   extractTypeFromFullFile,
 } from './dataExtractionUtilities';
-// @ts-ignore
-import { testResultData } from '../buildReportTestData';
 
 describe('Extraction Functions', () => {
   describe('extractAreaFromFullFile', () => {

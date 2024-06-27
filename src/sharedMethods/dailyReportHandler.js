@@ -3,13 +3,9 @@ import {
   batchUpdateMasterSheet,
   writeToSheet,
 } from '../google/googleSheetIntegration/writeToSheet.js';
-import {
-  buildDailyPayload,
-  processHeaderWithFormulas,
-} from '../dailyReportMethods/buildReport.js';
 import { loadJSON } from '../sharedMethods/dataHandler.js';
 import { getCurrentTime, getTodaysFormattedDate } from './dateFormatting.js';
-import { createMergeQueries } from '../dailyReportMethods/reportGenerationHelpers.js';
+import { createMergeQueries } from '../dailyReportMethods/reportGeneration/reportGenerationHelpers.js';
 import { getTabIdFromTitle } from '../google/sheetDataMethods/getSheetInfo.js';
 import {
   BuildTextStyles,
@@ -27,6 +23,8 @@ import { saveCSV } from './csvHandler.js';
 import { doesTodaysReportExist } from './dailyReportRequired.js';
 import { transformPlaywrightToFriendlyFormat } from './convertPayloads.js';
 import chalk from 'chalk';
+import { processHeaderWithFormulas } from '../dailyReportMethods/reportGeneration/processHeaderWithFormulas.js';
+import { buildDailyPayload } from '../dailyReportMethods/reportGeneration/buildDailyPayload.js';
 
 /**
  * Handles the creation and population of a daily report.

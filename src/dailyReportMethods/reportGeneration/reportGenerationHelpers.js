@@ -1,4 +1,9 @@
-import { FORMULA_KEYS, FORMULA_TEMPLATES, TEST_CATEGORIES_AVAILABLE, TEST_TYPES_AVAILABLE } from '../../constants.js';
+import {
+  FORMULA_KEYS,
+  FORMULA_TEMPLATES,
+  TEST_CATEGORIES_AVAILABLE,
+  TEST_TYPES_AVAILABLE,
+} from '../../../constants.js';
 
 /**
  * Generates placeholder entries for report construction.
@@ -63,7 +68,7 @@ export const generateStateReports = (defaultHeaderMetrics, index) => {
   if (!Array.isArray(defaultHeaderMetrics)) {
     throw new TypeError('defaultHeaderMetrics must be an array of strings.');
   }
-  if (!defaultHeaderMetrics.every(metric => typeof metric === 'string')) {
+  if (!defaultHeaderMetrics.every((metric) => typeof metric === 'string')) {
     throw new TypeError('Each item in defaultHeaderMetrics must be a string.');
   }
   if (typeof index !== 'number' || !Number.isInteger(index)) {
@@ -73,7 +78,10 @@ export const generateStateReports = (defaultHeaderMetrics, index) => {
     throw new RangeError('index is out of bounds for defaultHeaderMetrics.');
   }
 
-  const type = defaultHeaderMetrics[index].slice(2).replace(' tests', '').trim();
+  const type = defaultHeaderMetrics[index]
+    .slice(2)
+    .replace(' tests', '')
+    .trim();
   if (typeof type !== 'string' || type === '') {
     throw new TypeError('The extracted type must be a non-empty string.');
   }
@@ -150,13 +158,17 @@ export const generateReport = (types, payload, searchIndex, isTeam = false) => {
   if (!Array.isArray(types)) {
     throw new TypeError('Types must be an array.');
   }
-  if (!types.every(type => typeof type === 'string')) {
+  if (!types.every((type) => typeof type === 'string')) {
     throw new TypeError('All types must be strings.');
   }
   if (!Array.isArray(payload)) {
     throw new TypeError('Payload must be an array.');
   }
-  if (typeof searchIndex !== 'number' || !Number.isInteger(searchIndex) || searchIndex < 0) {
+  if (
+    typeof searchIndex !== 'number' ||
+    !Number.isInteger(searchIndex) ||
+    searchIndex < 0
+  ) {
     throw new TypeError('SearchIndex must be a non-negative integer.');
   }
   if (typeof isTeam !== 'boolean') {
@@ -167,7 +179,10 @@ export const generateReport = (types, payload, searchIndex, isTeam = false) => {
 
   for (const type of types) {
     const typeOccurrences = payload.filter(
-      (item) => item[searchIndex] && typeof item[searchIndex] === 'string' && item[searchIndex].includes(type)
+      (item) =>
+        item[searchIndex] &&
+        typeof item[searchIndex] === 'string' &&
+        item[searchIndex].includes(type)
     ).length;
 
     if (typeOccurrences > 0) {
@@ -181,7 +196,6 @@ export const generateReport = (types, payload, searchIndex, isTeam = false) => {
 
   return report;
 };
-
 
 /**
  * A function that builds specific formulas based on the input type,
@@ -212,8 +226,13 @@ export const buildFormulas = (
   if (!Number.isInteger(headerRowIndex) || headerRowIndex <= 0) {
     throw new Error('Header row index must be a positive integer.');
   }
-  if (!Number.isInteger(totalNumberOfRows) || totalNumberOfRows <= headerRowIndex) {
-    throw new Error('Total number of rows must be an integer greater than header row index.');
+  if (
+    !Number.isInteger(totalNumberOfRows) ||
+    totalNumberOfRows <= headerRowIndex
+  ) {
+    throw new Error(
+      'Total number of rows must be an integer greater than header row index.'
+    );
   }
   if (!Number.isInteger(bodyRowCount) || bodyRowCount <= 0) {
     throw new Error('Body row count must be a positive integer.');
@@ -224,15 +243,23 @@ export const buildFormulas = (
   if (typeof stateColumn !== 'string' || !stateColumn.trim()) {
     throw new Error('State column must be a non-empty string.');
   }
-  
-  if (!Array.isArray(constants.FORMULA_TEMPLATES) || constants.FORMULA_TEMPLATES.length === 0) {
+
+  if (
+    !Array.isArray(constants.FORMULA_TEMPLATES) ||
+    constants.FORMULA_TEMPLATES.length === 0
+  ) {
     throw new Error('FORMULA_TEMPLATES must be a non-empty array.');
   }
-  if (!Array.isArray(constants.FORMULA_KEYS) || constants.FORMULA_KEYS.length === 0) {
+  if (
+    !Array.isArray(constants.FORMULA_KEYS) ||
+    constants.FORMULA_KEYS.length === 0
+  ) {
     throw new Error('FORMULA_KEYS must be a non-empty array.');
   }
   if (constants.FORMULA_TEMPLATES.length !== constants.FORMULA_KEYS.length) {
-    throw new Error('FORMULA_TEMPLATES and FORMULA_KEYS arrays must have the same length.');
+    throw new Error(
+      'FORMULA_TEMPLATES and FORMULA_KEYS arrays must have the same length.'
+    );
   }
 
   // Function to replace placeholders with actual values
@@ -299,18 +326,31 @@ export const determineSubjectColumn = (
   if (typeof numberToLetter !== 'function') {
     throw new Error('numberToLetter must be a function.');
   }
-  if (typeof constants.TEST_CATEGORIES_AVAILABLE !== 'function' || typeof constants.TEST_TYPES_AVAILABLE !== 'function') {
-    throw new Error('Constants must include TEST_CATEGORIES_AVAILABLE and TEST_TYPES_AVAILABLE functions.');
+  if (
+    typeof constants.TEST_CATEGORIES_AVAILABLE !== 'function' ||
+    typeof constants.TEST_TYPES_AVAILABLE !== 'function'
+  ) {
+    throw new Error(
+      'Constants must include TEST_CATEGORIES_AVAILABLE and TEST_TYPES_AVAILABLE functions.'
+    );
   }
 
   const typesAvailable = constants.TEST_TYPES_AVAILABLE();
   const categoriesAvailable = constants.TEST_CATEGORIES_AVAILABLE();
 
-  if (!Array.isArray(typesAvailable) || !typesAvailable.every(t => typeof t === 'string')) {
+  if (
+    !Array.isArray(typesAvailable) ||
+    !typesAvailable.every((t) => typeof t === 'string')
+  ) {
     throw new Error('TEST_TYPES_AVAILABLE must return an array of strings.');
   }
-  if (!Array.isArray(categoriesAvailable) || !categoriesAvailable.every(c => typeof c === 'string')) {
-    throw new Error('TEST_CATEGORIES_AVAILABLE must return an array of strings.');
+  if (
+    !Array.isArray(categoriesAvailable) ||
+    !categoriesAvailable.every((c) => typeof c === 'string')
+  ) {
+    throw new Error(
+      'TEST_CATEGORIES_AVAILABLE must return an array of strings.'
+    );
   }
 
   if (categoriesAvailable.includes(type)) {
@@ -320,7 +360,6 @@ export const determineSubjectColumn = (
   }
   return numberToLetter(columnsAvailable.indexOf('team'));
 };
-
 
 /**
  * Joins formula keys into a regex pattern for matching in strings.
@@ -333,11 +372,11 @@ export const getKeysPattern = (constants = { FORMULA_KEYS }) => {
   if (!Array.isArray(constants.FORMULA_KEYS)) {
     throw new Error('FORMULA_KEYS must be an array.');
   }
-  if (!constants.FORMULA_KEYS.every(key => typeof key === 'string')) {
+  if (!constants.FORMULA_KEYS.every((key) => typeof key === 'string')) {
     throw new Error('FORMULA_KEYS must be an array of strings.');
   }
 
-  return constants.FORMULA_KEYS.map(key => `(${key})`).join('|');
+  return constants.FORMULA_KEYS.map((key) => `(${key})`).join('|');
 };
 
 /**
@@ -350,7 +389,13 @@ export const getKeysPattern = (constants = { FORMULA_KEYS }) => {
  * @throws {Error} If the inputs are not valid.
  */
 export const createMergeQueries = (data, headerRowIndex, sheetId) => {
-  if (!Array.isArray(data) || !data.every(row => Array.isArray(row) && row.every(cell => typeof cell === 'string'))) {
+  if (
+    !Array.isArray(data) ||
+    !data.every(
+      (row) =>
+        Array.isArray(row) && row.every((cell) => typeof cell === 'string')
+    )
+  ) {
     throw new Error('Data must be a 2D array of strings.');
   }
   if (!Number.isInteger(headerRowIndex) || headerRowIndex < 0) {
@@ -375,7 +420,8 @@ export const createMergeQueries = (data, headerRowIndex, sheetId) => {
     let startMergeIndex = headerRowIndex;
     for (let i = 0; i < data.length; i++) {
       const isLastRow = i === data.length - 1;
-      const isDifferent = !isLastRow && data[i][columnIndex] !== data[i + 1][columnIndex];
+      const isDifferent =
+        !isLastRow && data[i][columnIndex] !== data[i + 1][columnIndex];
       if (isLastRow || isDifferent) {
         if (startMergeIndex < headerRowIndex + i) {
           merges.push(

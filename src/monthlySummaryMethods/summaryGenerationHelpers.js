@@ -1,5 +1,5 @@
 import { getTabValuesByTitle } from '../google/googleSheetIntegration/getSheetData.js';
-import { copyPasteNormal } from '../google/sheetDataMethods/cpoyPaste.js';
+import { copyPasteNormal } from '../google/sheetDataMethods/copyPaste.js';
 import {
   findMatchingColumnByTabId,
   findTabTitleDataInArray,

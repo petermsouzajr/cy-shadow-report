@@ -1,6 +1,6 @@
 {
   "name": "qa-shadow-report",
-  "version": "1.1.14",
+  "version": "1.1.15",
   "bin": {
     "qa-shadow-report": "./cli.js",
     "qasr": "./cli.js",
@@ -12,7 +12,10 @@
     "lint": "eslint . --report-unused-disable-directives",
     "lint:fix": "npm run lint -- --fix",
     "test": "node --experimental-vm-modules node_modules/.bin/jest",
-    "test:watch": "node --experimental-vm-modules node_modules/.bin/jest --watch"
+    "test:sanity": "node --experimental-vm-modules node_modules/.bin/jest --testNamePattern='\\[sanity\\]'",
+    "test:watch": "node --experimental-vm-modules node_modules/.bin/jest --watch",
+    "test:coverage": "node --experimental-vm-modules node_modules/.bin/jest --coverage",
+    "docs": "jsdoc -c jsdoc.json"
   },
   "repository": "git+ssh://git@github.com/petermsouzajr/qa-shadow-report.git",
   "keywords": [
@@ -32,16 +35,18 @@
   },
   "homepage": "https://github.com/petermsouzajr/qa-shadow-report#readme",
   "devDependencies": {
-    "@babel/core": "^7.23.5",
-    "@babel/preset-env": "^7.23.5",
+    "@babel/core": "^7.24.6",
+    "@babel/preset-env": "^7.24.6",
     "@faker-js/faker": "^8.3.1",
     "@types/jest": "^29.5.12",
     "babel-jest": "^29.7.0",
+    "docdash": "^2.0.2",
     "eslint": "^8.57.0",
     "eslint-plugin-import": "^2.29.1",
     "eslint-plugin-n": "^16.0.2",
     "eslint-plugin-promise": "^6.1.1",
-    "jest": "^29.7.0"
+    "jest": "^29.7.0",
+    "jsdoc": "^4.0.3"
   },
   "dependencies": {
     "chalk": "^5.3.0",
